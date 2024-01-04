@@ -1,0 +1,58 @@
+// schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:dong387696@localhost:5432/chatapp_realtime"
+}
+
+model User {
+  user_id    Int          @id @default(autoincrement())
+  username   String
+  email      String       @unique
+  password   String
+  chatroomusers  Chatroomuser[]
+  messages      Message[]
+  @@map(name: "users")
+}
+
+model Chatroom {
+  id           Int            @id @default(autoincrement())
+  name         String
+  chatroomusers Chatroomuser[]
+  messages     Message[]
+  @@map(name: "chatroom")
+}
+
+model Chatroomuser {
+  id           Int        @id @default(autoincrement())
+  user         User       @relation(fields: [user_id], references: [user_id])
+  user_id      Int
+  chatroom     Chatroom   @relation(fields: [chatroom_id], references: [id])
+  chatroom_id  Int
+  messages     Message[]
+  @@map(name: "chatroomuser")
+}
+
+model Message {
+  id           Int        @id @default(autoincrement())
+  user         User       @relation(fields: [user_id], references: [user_id])
+  user_id      Int
+  chatroom     Chatroom   @relation(fields: [chatroom_id], references: [id])
+  chatroom_id  Int
+  content      String
+  created_at   DateTime   @default(now())
+  status       Int
+  chatroomuser Chatroomuser @relation(fields: [chatroomuser_id], references: [id])
+  chatroomuser_id Int
+
+  @@map(name: "message")
+}
+
+
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
