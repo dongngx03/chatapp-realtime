@@ -3,12 +3,12 @@ import prisma from "../config/prisma"
 export const searchUser = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
-            where : {
-                email : req.params.id
+            where: {
+                email: req.params.id
             }
         })
 
-        if(!user) {
+        if (!user) {
             return res.status(400).json({
                 message: "Không Tìm thấy người này"
             })
@@ -21,8 +21,8 @@ export const searchUser = async (req, res) => {
         })
     } catch (error) {
         return res.status(500).json({
-            name : error.name,
-            message : error.message
+            name: error.name,
+            message: error.message
         })
     }
 }

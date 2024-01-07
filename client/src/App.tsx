@@ -15,12 +15,12 @@ function App() {
   const user_id = sessionStorage.getItem('user_id') || '';
 
   return (
-    <AppContext.Provider value={{token, user_id, user_name}}>
+    <AppContext.Provider value={{ token, user_id, user_name }}>
       <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='/signin' element={<SignIn />}/>
-        <Route path='/signup' element={<SignUp />}/>
-        <Route path='/chat' element={<Chat />}/>
+        <Route path='/' element={<Home />} />
+        <Route path='/signin' element={<SignIn />} />
+        <Route path='/signup' element={<SignUp />} />
+        <Route path='/chat' element={<Chat />} />
         <Route path='/chatroom' element={token ? <ChatRoom /> : <NotFound />} />
       </Routes>
     </AppContext.Provider>

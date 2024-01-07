@@ -17,12 +17,12 @@ export const signUp = async (req, res) => {
             })
         }
         const user = await prisma.user.findUnique({
-            where : {
+            where: {
                 email: req.body.email
             }
         })
 
-        if(user != null) {
+        if (user != null) {
             return res.status(400).json({
                 message: "Email đã tồn tại vui lòng đăng ký bằng email khác ",
             })
@@ -31,9 +31,9 @@ export const signUp = async (req, res) => {
         const hashPW = await bcryptjs.hash(req.body.password, 10)
 
         const newUser = await prisma.user.create({
-            data : {
+            data: {
                 ...req.body,
-                password : hashPW
+                password: hashPW
             }
         })
 
@@ -45,16 +45,16 @@ export const signUp = async (req, res) => {
 
     } catch (error) {
         return res.status(500).json({
-            name : error.name,
-            message : error.message
+            name: error.name,
+            message: error.message
         })
     }
 }
 
 export const signIn = async (req, res) => {
     try {
-        const {error} = validSignIn.validate(req.body, {abortEarly: false});
-        if(error) {
+        const { error } = validSignIn.validate(req.body, { abortEarly: false });
+        if (error) {
             const errors = error.map((e) => e.message);
             return res.status(400).json({
                 message: errors
@@ -62,36 +62,36 @@ export const signIn = async (req, res) => {
         }
 
         const user = await prisma.user.findUnique({
-            where : {
-                email : req.body.email
+            where: {
+                email: req.body.email
             }
         })
 
-        if(user == null) {
+        if (user == null) {
             return res.status(400).json({
-                message : "Email không tồn tại, vui lòng thử lại"
+                message: "Email không tồn tại, vui lòng thử lại"
             })
         }
 
         const isMatch = await bcryptjs.compare(req.body.password, user.password)
-        if(!isMatch) {
+        if (!isMatch) {
             return res.status(400).json({
-                message : "Mật khẩu không trùng khớp"
+                message: "Mật khẩu không trùng khớp"
             })
         }
 
-        const accessToken = jwt.sign({user_id: user.user_id}, process.env.SECRET_CODE, {expiresIn : "1d"})
+        const accessToken = jwt.sign({ user_id: user.user_id }, process.env.SECRET_CODE, { expiresIn: "1d" })
 
         user.password = undefined;
         return res.status(200).json({
-            message : "Đăng nhập thành công",
-            user : user,
-            token : accessToken
+            message: "Đăng nhập thành công",
+            user: user,
+            token: accessToken
         })
     } catch (error) {
         return res.status(500).json({
-            name : error.name,
-            message : error.message
+            name: error.name,
+            message: error.message
         })
     }
 }

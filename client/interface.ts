@@ -24,7 +24,31 @@ export interface formSignIn {
 
 
 export interface AppContexts {
-  user_id: string,
-  user_name: string,
-  token: string
+    user_id: string,
+    user_name: string,
+    token: string
+}
+
+export interface roomList {
+    data: {
+        chatroomusers: []
+    }
+}
+
+export interface listRoomItem {
+    chatroom: {
+        id: number,
+        name: string
+    },
+    chatroom_id: number,
+    id: number,
+    user_id: number
+}
+
+export interface CustomButtonElement extends HTMLButtonElement {
+    dataset: {
+        chatroom_id: string;
+        chatroomuser_id: string;
+        room_infor: any;
+    }
 }

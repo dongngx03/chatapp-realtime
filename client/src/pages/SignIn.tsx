@@ -9,9 +9,9 @@ import Swal from 'sweetalert2';
 
 
 
-const SignIn:React.FC = () => {
+const SignIn: React.FC = () => {
   const formik = useFormik<formSignIn>({
-    initialValues : {
+    initialValues: {
       email: "",
       password: ""
     },
@@ -19,10 +19,10 @@ const SignIn:React.FC = () => {
       email: Yup.string().required("Bạn chưa nhập email").email("email không đúng định dạng"),
       password: Yup.string().required("Bạn chưa nhập mật khẩu").min(8, "Tối thiểu 8 ký tự")
     }),
-    onSubmit: async (data:object):Promise<void> => {
+    onSubmit: async (data: object): Promise<void> => {
       try {
-        const url:string = "http://localhost:8080/api/auth/signin";
-        const res:any = await fetch(url, {
+        const url: string = "http://localhost:8080/api/auth/signin";
+        const res: any = await fetch(url, {
           method: "POST",
           headers: {
             'Content-Type': "application/json"
@@ -30,9 +30,9 @@ const SignIn:React.FC = () => {
           body: JSON.stringify(data)
         })
 
-        const value:any = await res.json();
+        const value: any = await res.json();
 
-        if(res.status === 400) {
+        if (res.status === 400) {
           Swal.fire({
             title: 'Lỗi',
             text: value.message,
@@ -42,7 +42,7 @@ const SignIn:React.FC = () => {
           return value
         }
 
-        if(res.status === 500) {
+        if (res.status === 500) {
           Swal.fire({
             title: 'Lỗi',
             text: value.message,
@@ -52,14 +52,14 @@ const SignIn:React.FC = () => {
           return value
         }
 
-        if(res.status === 200) {
+        if (res.status === 200) {
           Swal.fire({
             title: 'Thành công',
             text: value.message,
             icon: 'success',
             confirmButtonText: 'Tiếp tục'
           }).then((result) => {
-            if(result.isConfirmed) {
+            if (result.isConfirmed) {
               sessionStorage.setItem('user_name', value.user.username);
               sessionStorage.setItem('user_id', value.user.user_id);
               sessionStorage.setItem('token', value.token)
@@ -68,12 +68,12 @@ const SignIn:React.FC = () => {
           });
         }
       } catch (error) {
-        console.log(error);  
+        console.log(error);
       }
     }
   })
 
- 
+
   return (
     <div className='tw-w-full tw-h-screen d-flex justify-content-center align-items-center tw-bg-[#2F3949]'>
       <div className='tw-w-1/3 tw-h-auto tw-bg-gray-50 tw-p-10 tw-shadow-lg tw-rounded-lg'>
@@ -81,8 +81,8 @@ const SignIn:React.FC = () => {
         <form action="" onSubmit={formik.handleSubmit}>
           <div className="mb-3">
             <label htmlFor="">Email</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               className='form-control'
               placeholder='example@gmail.com'
               id='email'
@@ -91,16 +91,16 @@ const SignIn:React.FC = () => {
               value={formik.values.email}
             />
             {
-              formik.errors.email &&(
+              formik.errors.email && (
                 <span className='tw-text-red-500 tw-text-xs'>{formik.errors.email}</span>
               )
             }
           </div>
 
-          <div className='mb-3'> 
+          <div className='mb-3'>
             <label htmlFor="">Mật khẩu</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               className='form-control'
               placeholder='123xyz..'
               id='password'
@@ -109,7 +109,7 @@ const SignIn:React.FC = () => {
               value={formik.values.password}
             />
             {
-              formik.errors.password &&(
+              formik.errors.password && (
                 <span className='tw-text-red-500 tw-text-xs'>{formik.errors.password}</span>
               )
             }

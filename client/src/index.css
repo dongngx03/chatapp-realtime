@@ -44,4 +44,10 @@
   }
 }
 
+.tw-overflow-y-auto {
+  scroll-behavior: smooth; /* Cuộn mượt */
+  overscroll-behavior: contain; /* Ngăn chặn hiệu ứng overscrolling */
+}
+
+
   

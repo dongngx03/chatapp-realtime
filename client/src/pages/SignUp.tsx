@@ -7,10 +7,10 @@ import * as Yup from "yup";
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
-const SignUp:React.FC = () => {
-  const navigate:any = useNavigate();
+const SignUp: React.FC = () => {
+  const navigate: any = useNavigate();
   const formik = useFormik<formSignUp>({
-    initialValues: {  
+    initialValues: {
       username: "",
       password: "",
       email: "",
@@ -18,20 +18,20 @@ const SignUp:React.FC = () => {
     },
     validationSchema: Yup.object({
       username: Yup.string().required("Vui lòng không được để trống"),
-      email: Yup.string().required("Bạn chưa nhập email").matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,"Email chưa hợp lệ"),
+      email: Yup.string().required("Bạn chưa nhập email").matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, "Email chưa hợp lệ"),
       password: Yup.string().required("Bạn chưa nhập mật khẩu").min(8, "mật khẩu tối thiểu 8 ký tự"),
       confirmPassword: Yup.string().required("Bạn chưa xác nhận lại mật khẩu").oneOf([Yup.ref('password'), ""], "Mật khẩu chưa trùng khớp")
     }),
-    onSubmit: async ():Promise<void> => {
+    onSubmit: async (): Promise<void> => {
 
-      const user:inforUser = {
+      const user: inforUser = {
         username: formik.values.username,
         password: formik.values.password,
         email: formik.values.email
       }
 
       try {
-        const url:string = 'http://localhost:8080/api/auth/signup';
+        const url: string = 'http://localhost:8080/api/auth/signup';
         const res = await fetch(url, {
           method: "POST",
           headers: {
@@ -42,8 +42,8 @@ const SignUp:React.FC = () => {
 
         const data = await res.json();
 
-        if(res.status === 400) {
-         
+        if (res.status === 400) {
+
           Swal.fire({
             title: 'Lỗi',
             text: data.message,
@@ -54,7 +54,7 @@ const SignUp:React.FC = () => {
           return data
         }
 
-        if(res.status === 500 ) {
+        if (res.status === 500) {
           Swal.fire({
             title: 'Lỗi',
             text: data.message,
@@ -63,30 +63,30 @@ const SignUp:React.FC = () => {
           });
         }
 
-        if(res.status === 200) {
+        if (res.status === 200) {
           Swal.fire({
             title: 'Thành công',
             text: data.message,
             icon: 'success',
             confirmButtonText: 'Tiếp tục'
           }).then((result) => {
-            if(result.isConfirmed) {
+            if (result.isConfirmed) {
               navigate('/signin')
             }
           });
           console.log(data);
-          
+
         }
 
       } catch (error) {
         console.log(error);
-        
+
       }
-      
+
     }
   })
 
-  
+
   return (
     <div>
       <div className='tw-w-full tw-h-screen d-flex justify-content-center align-items-center tw-bg-[#2F3949]'>
@@ -95,8 +95,8 @@ const SignUp:React.FC = () => {
           <form action="" onSubmit={formik.handleSubmit}>
             <div className="mb-3">
               <label htmlFor="">Email</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className='form-control'
                 placeholder='example@gmail.com'
                 id='email'
@@ -112,8 +112,8 @@ const SignUp:React.FC = () => {
             </div>
             <div className="mb-3">
               <label htmlFor="">Tên</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className='form-control'
                 placeholder='Nguyễn văn A'
                 id='username'
@@ -122,16 +122,16 @@ const SignUp:React.FC = () => {
                 value={formik.values.username}
               />
               {
-                formik.errors.username &&(
+                formik.errors.username && (
                   <span className='tw-text-red-500 tw-text-xs'>{formik.errors.username}</span>
                 )
               }
             </div>
 
-            <div className='mb-3'> 
+            <div className='mb-3'>
               <label htmlFor="">Mật khẩu</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 className='form-control'
                 placeholder='123xyz..'
                 id='password'
@@ -140,15 +140,15 @@ const SignUp:React.FC = () => {
                 value={formik.values.password}
               />
               {
-                formik.errors.password &&(
+                formik.errors.password && (
                   <span className='tw-text-red-500 tw-text-xs'>{formik.errors.password}</span>
                 )
               }
             </div>
-            <div className='mb-3'> 
+            <div className='mb-3'>
               <label htmlFor="">Nhập lại mật khẩu</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 className='form-control'
                 placeholder='123xyz..'
                 id='confirmPassword'
@@ -157,7 +157,7 @@ const SignUp:React.FC = () => {
                 value={formik.values.confirmPassword}
               />
               {
-                formik.errors.confirmPassword &&(
+                formik.errors.confirmPassword && (
                   <span className='tw-text-red-500 tw-text-xs'>{formik.errors.confirmPassword}</span>
                 )
               }
