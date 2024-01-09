@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createBoxChat, getMessages, joinBoxChat, roomList, sendMessage } from "../controllers/ChatRoomController";
+import { createBoxChat, getMessages, joinBoxChat, roomList, searchChatRoom, sendMessage } from "../controllers/ChatRoomController";
 
 const router = Router();
 
@@ -8,6 +8,7 @@ router.get('/roomlist/:id', roomList)
 router.post('/join', joinBoxChat)
 router.post('/getmessage', getMessages)
 router.post('/sendmessage', sendMessage)
+router.post('/searchchatroom', searchChatRoom)
 
 
 export default router

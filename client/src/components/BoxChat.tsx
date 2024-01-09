@@ -18,7 +18,8 @@ const BoxChat: React.FC = () => {
           <div className='tw-w-full tw-h-full d-flex flex-column align-items-center tw-justify-between'>
             <div className="tw-w-full tw-h-[4rem] tw-border-b tw-border-[#2F3949] d-flex justify-content-start align-items-center tw-gap-1">
               <UserOutlined className='tw-text-2xl tw-text-white' />
-              <span className='tw-text-[#7E8687]'>{infor != '' ? infor.name : ""}</span>
+              <span className='tw-text-[#7E8687]'>{infor != '' ? infor.name : ""} |</span>
+              <span className='tw-text-red-400'>mã phòng: {infor.id}</span>
             </div>
 
             <Message />

@@ -111,9 +111,9 @@ export const getMessages = async (req, res) => {
             include: {
                 user: true
             },
-            take : 8,
-            orderBy : {
-                created_at : 'desc'
+            take: 8,
+            orderBy: {
+                created_at: 'desc'
             }
         })
 
@@ -134,30 +134,58 @@ export const sendMessage = async (req, res) => {
     try {
         // gửi tin nhắn 
         const mess = await prisma.message.create({
-            data : {
-                user_id : parseInt(user_id),
-                chatroom_id : parseInt(chatroom_id),
-                content : content,
-                status : 1,
-                chatroomuser_id : parseInt(chatroomuser_id)
+            data: {
+                user_id: parseInt(user_id),
+                chatroom_id: parseInt(chatroom_id),
+                content: content,
+                status: 1,
+                chatroomuser_id: parseInt(chatroomuser_id)
             }
         })
 
         // lấy tin nhắn vừa gửi 
         const lastMess = await prisma.message.findUnique({
-            where : {
-                id : parseInt(mess.id)
+            where: {
+                id: parseInt(mess.id)
             },
-            include : {
-                user : true
+            include: {
+                user: true
             }
         })
 
         return res.status(200).json({
-            message : "Gửi thành công", 
+            message: "Gửi thành công",
             mess: lastMess
         })
 
+    } catch (error) {
+        return res.status(500).json({
+            name: error.name,
+            message: error.message
+        })
+    }
+}
+
+// tìm phòng chat 
+export const searchChatRoom = async (req, res) => {
+    const { id } = req.body;
+    try {
+        // tìm phòng xem có tồn tại hay không 
+        const room = await prisma.chatroom.findUnique({
+            where : {
+                id : parseInt(id)
+            }
+        })
+
+        if(!room) {
+            return res.status(400).json({
+                message : "Phòng không tồn tại, vui lòng nhập lại mã"
+            })
+        }
+
+        return res.status(200).json({
+            room : room
+        })
     } catch (error) {
         return res.status(500).json({
             name: error.name,

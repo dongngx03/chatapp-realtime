@@ -6,6 +6,7 @@ import { useContext } from 'react'
 import AppContext from '../contexts/AppContext'
 import { CustomButtonElement } from '../../interface'
 import socket from '../services/socket'
+import Swal from 'sweetalert2'
 
 
 const ChatRoom: React.FC = () => {
@@ -18,16 +19,20 @@ const ChatRoom: React.FC = () => {
   const [chatroomuser_id, setChatroomuser_id] = useState<string>(''); // lưu chatroomuser_idd sau khi người nào đó vào phòng chat của mình 
   const [roomInfor, setRoomInfor] = useState<string>(''); // lưu thông tin về chatroom người dùng bấm vào 
   const [messWillBeSent, setMessWillBeSent] = useState<string>('') // lưu tin nhắn sẽ dược gửi
+  const [idBoxChat, setIdBoxChat] = useState<string>('') // lưu mã phòng 
+  const [resOfSearch, setResOfSearch] = useState<any>('')
   // url_base
   const base_url: string = "http://localhost:8080";
   // id user
   const { user_id, user_name } = useContext(AppContext);
+
   // scrollTop
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
   };
+
   // list boxchat 
   useEffect(() => {
     const getRoom = async (): Promise<any> => {
@@ -52,11 +57,11 @@ const ChatRoom: React.FC = () => {
 
   }, [])
 
+  // scroll tự kéo khi nhắn tin
   useEffect(() => {
     // tự kéo xuống bot mỗi khi gửi tin nhắn 
     scrollToBottom();
   }, [messages])
-
 
   // hàm lấy tất cả các tn nhắn có trong một box chat 
   const getAllMessages = async (e: React.MouseEvent<CustomButtonElement>): Promise<void> => {
@@ -88,12 +93,7 @@ const ChatRoom: React.FC = () => {
 
       const data = await res.json();
       // console.log(data);
-      // gán message vừa lấy được vào useState
-
       setMessages(data.messages)
-
-      // tham gia phòng bằng soket
-
 
     } catch (error) {
       console.log(error);
@@ -132,13 +132,110 @@ const ChatRoom: React.FC = () => {
     }
 
   }
+  // tìm kiếm chat room
+  const searchChatRoom = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${base_url}/api/chatroom/searchchatroom`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: idBoxChat
+        })
+      });
 
-  // console.log(messages);
-  // console.log(chatroom_id);
-  // console.log(user_id);
-  // console.log(chatroomuser_id);
-  // console.log(messWillBeSent);
+      const data = await res.json();
 
+      if (res.status === 400) {
+        Swal.fire({
+          title: 'Lỗi',
+          text: data.message,
+          icon: 'error',
+          confirmButtonText: 'Quay lại'
+        });
+
+        return;
+      }
+
+      if (res.status === 500) {
+        Swal.fire({
+          title: 'Lỗi',
+          text: 'Lỗi mạng, vui lòng thử lại trong chốc lát',
+          icon: 'error',
+          confirmButtonText: 'Quay lại'
+        });
+
+        return;
+      }
+
+      if (res.status === 200) {
+        setIdBoxChat('');
+        setResOfSearch(data.room)
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
+  // join vào box chat
+  const joinBoxChat = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    e.preventDefault();
+    const chatRoomId: any = e.currentTarget.dataset.chatroom_id;
+    const userId: any = user_id;
+
+    console.log(chatRoomId);
+    console.log(userId);
+    
+    if(!chatRoomId || !userId) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${base_url}/api/chatroom/join`, {
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+          user_id : userId,
+          chatroom_id : chatRoomId
+        })
+      })
+
+      const data: any = await res.json();
+
+      if(res.status === 400) {
+        Swal.fire({
+          title: 'Lỗi',
+          text: data.message,
+          icon: 'error',
+          confirmButtonText: 'Quay lại'
+        });
+
+        setResOfSearch('');
+        return;
+      }
+
+      if(res.status === 200) {
+        Swal.fire({
+          title: 'Thành công',
+          text: data.message,
+          icon: 'success',
+          confirmButtonText: 'Quay lại'
+        }).then((result) => {
+          if(result.isConfirmed) {
+            window.location.href = '/chatroom';
+          }
+        });
+      }
+
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
 
   return (
     <ChatRoomContext.Provider value={{
@@ -151,7 +248,12 @@ const ChatRoom: React.FC = () => {
       setMessWillBeSent,
       sendMessage,
       messWillBeSent,
-      messagesEndRef
+      messagesEndRef,
+      searchChatRoom,
+      setIdBoxChat,
+      idBoxChat,
+      resOfSearch,
+      joinBoxChat
     }}>
       <div className='tw-w-full tw-h-screen tw-bg-[#111827] d-flex flex-column align-items-center'>
         <NavTop />
