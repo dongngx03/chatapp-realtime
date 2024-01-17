@@ -32,20 +32,22 @@ const ChatRoom: React.FC = () => {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
   };
-
+  // lây phòng 
+  const getRoom = async (): Promise<any> => {
+    try {
+      const res: any = await fetch(`${base_url}/api/chatroom/roomlist/${user_id}`);
+      const data: any = await res.json();
+      setListRoom(data.data.chatroomusers);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // list boxchat 
   useEffect(() => {
-    const getRoom = async (): Promise<any> => {
-      try {
-        const res: any = await fetch(`${base_url}/api/chatroom/roomlist/${user_id}`);
-        const data: any = await res.json();
-        setListRoom(data.data.chatroomusers);
-      } catch (error) {
-        console.log(error);
-      }
-    }
     getRoom();
+  }, [])
 
+  useEffect(() => {
     socket.on('newMess', (data: any) => {
       setMessages(mess => [...mess, data])
       console.log(data);
@@ -54,8 +56,7 @@ const ChatRoom: React.FC = () => {
     return () => {
       socket.off('newMess');
     };
-
-  }, [])
+  }, [messages])
 
   // scroll tự kéo khi nhắn tin
   useEffect(() => {
@@ -187,26 +188,26 @@ const ChatRoom: React.FC = () => {
 
     console.log(chatRoomId);
     console.log(userId);
-    
-    if(!chatRoomId || !userId) {
+
+    if (!chatRoomId || !userId) {
       return;
     }
 
     try {
       const res = await fetch(`${base_url}/api/chatroom/join`, {
-        method : "POST",
-        headers : {
-          "Content-Type" : "application/json"
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
         },
-        body : JSON.stringify({
-          user_id : userId,
-          chatroom_id : chatRoomId
+        body: JSON.stringify({
+          user_id: userId,
+          chatroom_id: chatRoomId
         })
       })
 
       const data: any = await res.json();
 
-      if(res.status === 400) {
+      if (res.status === 400) {
         Swal.fire({
           title: 'Lỗi',
           text: data.message,
@@ -218,14 +219,14 @@ const ChatRoom: React.FC = () => {
         return;
       }
 
-      if(res.status === 200) {
+      if (res.status === 200) {
         Swal.fire({
           title: 'Thành công',
           text: data.message,
           icon: 'success',
           confirmButtonText: 'Quay lại'
         }).then((result) => {
-          if(result.isConfirmed) {
+          if (result.isConfirmed) {
             window.location.href = '/chatroom';
           }
         });
