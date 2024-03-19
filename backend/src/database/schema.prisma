@@ -1,7 +1,7 @@
 // schema.prisma
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:dong387696@localhost:5432/chatapp_realtime"
+  url      = env("url_postgre")
 }
 
 model User {
